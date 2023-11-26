@@ -1,0 +1,31 @@
+<div class="container login_container">
+    <div class="row" style="padding: 1rem;">
+        <div class="brand_logo_nav">
+            <a class="navbar-brand" href="#">
+                <img src="../assets/images/logo-westream.svg" alt="We.Stream" width="120" height="40"
+                    class="d-inline-block align-text-top">
+            </a>
+        </div>
+        <div class="login_form">
+            <div class="form-group">
+                <label for="IMEI" style="font-weight: 600;margin-left: 5px;font-weight: 600;">IMEI Number</label>
+                <input type="text" class="form-control mt-1" placeholder="Enter IMEI" (keyup)="validateIMEI($event)">
+                <small class="form-text {{imeiStatusMessage.class}} mt-1" style="font-size: 10px;margin-left: 5px;font-weight: 600;">{{imeiStatusMessage.message}}</small>
+            </div>
+            <div class="form-group" *ngIf="false">
+                <label for="Email" style="font-weight: 600;margin-left: 5px;font-weight: 600;">Email Address</label>
+                <input type="email" class="form-control mt-1" id="Email" aria-describedby="emailHelp"
+                    placeholder="Enter email">
+                <small id="emailHelp" class="form-text text-muted mt-1" style="font-size: 10px;margin-left: 5px;font-weight: 600;">The email address must be linked with IMEI number</small>
+            </div>
+            <div class="form-group" *ngIf="true">
+                <label for="referral" style="font-weight: 600;margin-left: 5px;font-weight: 600;">Referral Code
+                    (Optional)</label>
+                <input type="text" class="form-control mt-1" placeholder="Enter Code" [disabled]="disableReferralCode">
+                <small class="form-text {{referralStatusMessage.class}} mt-1"
+                    style="font-size: 10px;margin-left: 5px;font-weight: 600;">{{referralStatusMessage.message}}</small>
+            </div>
+            <button class="login_btn" [disabled]="disableLoginNotIMEIValid">Login</button>
+        </div>
+    </div>
+</div>

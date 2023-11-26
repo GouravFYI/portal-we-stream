@@ -1,0 +1,26 @@
+#referral_card {
+    /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
+    border: 0px;
+    padding: 1rem;
+    font-family: "Montserrat", sans-serif;
+    border-radius: 15px;
+}
+
+#referralCode {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    background-color: #efefef;
+    padding: 10px;
+    max-width: 300px;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+}
+
+@media only screen and (max-width: 500px) {
+    #referral_card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 30px;
+    }
+}

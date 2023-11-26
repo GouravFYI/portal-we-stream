@@ -1,0 +1,32 @@
+.my_bundle_header {
+    margin: 10px 0px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.bundle_comp {
+    max-width: 500px;
+}
+
+.bundle_info_list {
+    margin-top: 2rem;
+    border: 3px solid #efeefe;
+    border-radius: 20px;
+}
+
+.bundle_info_list li span {
+    margin-left: 10px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.bundle_info_list li {
+    border-bottom: 0px;
+}
+
+.my_bundle_card {
+    border-radius: 20px;
+    font-family: "Montserrat", sans-serif;
+}
