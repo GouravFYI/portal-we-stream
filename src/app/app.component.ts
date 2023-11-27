@@ -13,17 +13,20 @@ export class AppComponent implements OnInit {
   @ViewChild('navbarTogglerList') navbarTogglerList!: ElementRef;
 
   ngOnInit(): void {
-    this.visibilityService.visibleNav$.subscribe((value) => {
-      this.visibleNav = value;
-    });
+    this.checkRoute()
+    if(sessionStorage.getItem('visibleNav') == '1'){
+      this.visibleNav = true
+    }else{
+      this.visibilityService.visibleNav$.subscribe((value) => {
+        this.visibleNav = value;
+      });
+    }
   }
 
-  checkAuth(){
+  checkRoute(){
     const path = location.pathname
-    if (path !== '/login') {
-      this.visibleNav = true
-    }else {
-      this.visibleNav = false
+    if (path == '/login') {
+      sessionStorage.clear();
     }
   }
 

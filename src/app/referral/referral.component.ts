@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BundleinfoService } from '../service/bundleinfo.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-referral',
   templateUrl: './referral.component.html',
@@ -12,10 +12,15 @@ export class ReferralComponent implements OnInit {
   buttonText:string = 'Copy code'
   iconType:string = 'bi-clipboard'
   iconTimer:any = null
-  constructor(private bundleInfo: BundleinfoService) { }
+  constructor(private bundleInfo: BundleinfoService, private router:Router) { }
 
   ngOnInit(): void {
-    this.setReferral()
+    if(sessionStorage.getItem('bundleInfo') !== null){
+      let data:any = sessionStorage.getItem('bundleInfo')
+      this.referral = JSON.parse(data)?.referralCode
+    }else{
+      this.router.navigate(['/login'])
+    }
     clearTimeout(this.iconTimer);
   }
 

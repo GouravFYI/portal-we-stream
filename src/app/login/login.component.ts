@@ -4,6 +4,7 @@ import { ApisService } from "../apis.service"
 import { BundleinfoService } from '../service/bundleinfo.service';
 import { IMEIService } from '../service/imei.service';
 import { VisibilityService } from '../app.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -23,11 +24,17 @@ export class LoginComponent implements OnInit {
     class : 'text-danger'
   }
 
+  validImei:any = null
+  referralCode:any = null
+  isLoading:boolean = false
+  isError:boolean = false
+
   constructor(
     private api:ApisService,
     private bundleInfo:BundleinfoService,
     private imeiService:IMEIService,
-    private visibilityService: VisibilityService
+    private visibilityService: VisibilityService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -54,6 +61,10 @@ export class LoginComponent implements OnInit {
       return
     }
 
+    this.imeiStatusMessage = {
+      message : 'Checking your IMEI validity.....',
+      class : 'text-primary'
+    }
     this.api.imeiValidation(input).subscribe(resp => {
       this.imeiService.setImeiInfo(resp)
       this.imeiStatusMessage = {
@@ -68,6 +79,8 @@ export class LoginComponent implements OnInit {
           class : 'text-success'
         }
       }
+      this.validImei = input
+      sessionStorage.setItem('imeiInfo',JSON.stringify(resp))
     },(error)=>{
       this.imeiStatusMessage = {
         message : 'Invalid IMEI',
@@ -75,6 +88,20 @@ export class LoginComponent implements OnInit {
       }
     })
   }
-  
-  // this.visibilityService.toggleNav(true);
+
+  getBundleInfo(){
+    this.isLoading = true
+    this.api.getBundles(this.validImei,null,this.referralCode).subscribe(resp => {
+      this.bundleInfo.setBundleInfo(resp)
+      sessionStorage.setItem('bundleInfo',JSON.stringify(resp))
+      this.isLoading = false
+      this.visibilityService.toggleNav(true);
+      sessionStorage.setItem('visibleNav','1')
+      this.router.navigate(['/my-bundle']);
+    },(error)=>{
+      this.isLoading = false
+      this.isError = true
+    })
+  }
+
 }

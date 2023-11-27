@@ -1,39 +1,62 @@
 <div class="container mt-3 bundle_comp">
-    <div class="row d-flex">
-        <div class="col-md-12">
+    <div class="row d-flex px-2">
+        <div class="col-md-12" *ngIf="activeBundle.length !== 0">
             <div class="my_bundle_header">
                 My Active Bundle
             </div>
             <div class="card my_bundle_card"
                 style="width:100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">DayPass : Unlimited DayPass</h5>
-                    <h6 class="card-subtitle mb-2 text-success" style="font-size: 13px;">Purchase on Dec 16, 2023 09:42 AM</h6>
-                    <h6 class="card-subtitle mb-2 text-danger" style="font-size: 13px;">Expires on Dec 19, 2023 09:42 AM</h6>
-                    <ul class="list-group list-group-flush bundle_info_list">
-                        <li class="list-group-item">
-                            <i class="bi bi-arrow-down-up"></i>
-                            <span>500 MB high speed</span>
-                        </li>
-                        <li class="list-group-item">
-                            <i class="bi bi-qr-code"></i>
-                            <span>Roamability_500M_DP</span>
-                        </li>
-                        <li class="list-group-item">
-                            <i class="bi bi-tags"></i>
-                            <span>EUR 8 /-</span>
-                        </li>
-                        <li class="list-group-item">
-                            <i class="bi bi-check-circle"></i>
-                            <span>VALID</span>
-                        </li>
-                        <li class="list-group-item">
-                            <i class="bi bi-globe-europe-africa"></i>
-                            <span>Available in 140 + countries</span>
-                        </li>
-                    </ul>
+                    <h5 class="card-title text-primary" style="font-size: 18px;">{{activeBundle[0]?.goodsName}}</h5>
+                    <h6 class="card-subtitle mb-2 text-success" style="font-size: 13px;">Purchased on {{convertTimestamp(activeBundle[0].effectiveTime)}}</h6>
+                    <h6 class="card-subtitle mb-2 text-danger" style="font-size: 13px;">Expires on {{activeBundle.expiryTime !== 0 ? convertTimestamp(activeBundle[0].expiryTime) : convertTimestamp(activeBundle[0].effectiveTime)}}</h6>
                 </div>
             </div>
+        </div>
+        <div class="my_bundle_no_data" *ngIf="activeBundle.length == 0">
+            No Active Bundle Found
+        </div>
+    </div>
+
+    <div class="row d-flex mt-4 px-2">
+        <div class="col-md-12" *ngIf="readyForUsageBundle.length !== 0">
+            <div class="my_bundle_header">
+                Ready To Use Bundles
+            </div>
+            <div class="card my_bundle_card" style="width:100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;"
+            *ngFor="let item of readyForUsageBundle">
+                <div class="card-body">
+                    <h5 class="card-title text-primary" style="font-size: 18px;">{{item?.goodsName}}</h5>
+                    <h6 class="card-subtitle mb-2 text-success" style="font-size: 13px;">Purchased on {{convertTimestamp(item.effectiveTime)}}</h6>
+                    <h6 class="card-subtitle mb-2 text-danger" style="font-size: 13px;">Expired on {{convertTimestamp(item.expiryTime)}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="my_bundle_no_data" *ngIf="readyForUsageBundle.length == 0">
+            <span>No Ready To Use Bundles Found</span> 
+            <small class="form-text text-success mt-1"
+                    style="font-size: 10px;margin-left: 5px;font-weight: 600;">* These Bundles get Activated as soon as 
+                your current Data Plan expires.You can recharge them prior to the current bundle expiry</small>
+        </div>
+    </div>
+
+
+    <div class="row d-flex mt-4 px-2">
+        <div class="col-md-12" *ngIf="historyBundles.length !== 0">
+            <div class="my_bundle_header">
+                My Purchase History
+            </div>
+            <div class="card my_bundle_card" style="width:100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;"
+            *ngFor="let item of historyBundles">
+                <div class="card-body">
+                    <h5 class="card-title text-primary" style="font-size: 18px;">{{item?.goodsName}}</h5>
+                    <h6 class="card-subtitle mb-2 text-success" style="font-size: 13px;">Purchased on {{convertTimestamp(item.effectiveTime)}}</h6>
+                    <h6 class="card-subtitle mb-2 text-danger" style="font-size: 13px;">Expired on {{convertTimestamp(item.expiryTime)}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="my_bundle_no_data" *ngIf="historyBundles.length == 0">
+            No Purchase History Found
         </div>
     </div>
 </div>

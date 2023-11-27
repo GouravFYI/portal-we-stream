@@ -8,7 +8,7 @@
 }
 
 .bundle_comp {
-    max-width: 500px;
+    max-width: 800px;
 }
 
 .bundle_info_list {
@@ -27,6 +27,25 @@
 }
 
 .my_bundle_card {
-    border-radius: 20px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
     font-family: "Montserrat", sans-serif;
+}
+
+.my_bundle_no_data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    width:100%;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;
+    border-radius: 10px;
+    padding: 1rem;
+    color: rgb(240, 100, 100);
 }
