@@ -81,6 +81,7 @@ export class LoginComponent implements OnInit {
       }
       this.validImei = input
       sessionStorage.setItem('imeiInfo',JSON.stringify(resp))
+      sessionStorage.setItem('imei',JSON.stringify(input))
     },(error)=>{
       this.imeiStatusMessage = {
         message : 'Invalid IMEI',

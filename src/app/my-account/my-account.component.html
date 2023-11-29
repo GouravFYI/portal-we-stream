@@ -1,1 +1,438 @@
-<p>my-account works!</p>
+<div class="container account_container">
+    <div class="row account_header">
+        My Account
+    </div>
+    <div class="row">
+        <form class="account_form" [formGroup]="accountForm">
+            <div class="form-group account_type_radio">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" value="personal" formControlName="accountType"
+                        (click)="toggleAccountType('personal')">
+                    <label class="form-check-label" for="personal">Personal</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" value="business" formControlName="accountType"
+                        (click)="toggleAccountType('business')">
+                    <label class="form-check-label" for="business">Business</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input class="form-control" type="text" required minlength="1" formControlName="firstName">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input class="form-control" type="text" required minlength="1" formControlName="lastName">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input class="form-control" type="email" required formControlName="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Country Of Origin</label>
+                <select class="form-select" required formControlName="countryOfOrigin" (change)="modifyCountryOfOrigin()">
+                    <option value="" selected disabled>Select your Country</option>
+                    <option *ngFor="let country of countryList" [value]="country.cc">{{ country.name }}</option>
+                </select>
+            </div>
+            <div class="account_form_pr">
+                <legend>Permanent Address</legend>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input class="form-control" type="text" required minlength="1" formControlName="pCity">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input class="form-control" type="text" required minlength="1" formControlName="pAddress">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Postal Code</label>
+                    <input class="form-control" type="text" required minlength="1" formControlName="pPostal">
+                </div>
+            </div>
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="addressSwitchCheckChecked"
+                    [checked]="isSameAddress" (click)="toggleAddress()">
+                <label class="form-check-label" for="addressSwitchCheckChecked">Resident address same as permanent
+                    one</label>
+            </div>
+            <div class="account_form_pr" *ngIf="!isSameAddress">
+                <legend>Resident Address</legend>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input class="form-control" type="text" minlength="1" formControlName="rCity">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input class="form-control" type="text" minlength="1" formControlName="rAddress">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Postal Code</label>
+                    <input class="form-control" type="text" minlength="1" formControlName="rPostal">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Bank Address</label>
+                <input class="form-control" type="text" required minlength="1" formControlName="bankCountry" [attr.disabled]="true">
+            </div>
+            <div class="form-group" *ngIf="accountType == 'business'">
+                <label class="form-label">Company Name</label>
+                <input class="form-control" type="text" minlength="1" formControlName="companyName">
+            </div>
+            <div class="form-group" *ngIf="accountType == 'business'">
+                <label class="form-label">Company Address</label>
+                <input class="form-control" type="text" minlength="1" formControlName="companyAddress">
+            </div>
+            <div class="form-group" *ngIf="accountType == 'business'">
+                <label class="form-label">Company ID</label>
+                <input class="form-control" type="text" minlength="1" formControlName="companyId">
+            </div>
+            <div class="form-group" *ngIf="accountType == 'business' && isEUNation">
+                <label class="form-label">Vat Number</label>
+                <input class="form-control" type="text" minlength="1" formControlName="vatNumber"
+                    (keyup)="validateVat($event)">
+                <small class="form-text {{vatValidationMessage.class}} mt-1"
+                    style="font-size: 10px;margin-left: 5px;font-weight: 600;">{{vatValidationMessage.message}}</small>
+            </div>
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="acknowledgeSwitchCheckChecked" formControlName="confirmInfo">
+                <label class="form-check-label" for="acknowledgeSwitchCheckChecked">
+                    I hereby declare that the information given in this form is true, complete and accurate.
+                </label>
+            </div>
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="privacySwitchCheckChecked" formControlName="confirmInfo">
+                <label class="form-check-label" for="privacySwitchCheckChecked">
+                    I agree with the <span id="privacy-statement-link" data-bs-toggle="modal"
+                        data-bs-target="#privacyModal">privacy statement</span> and provide consent to
+                    process my personal data.
+                </label>
+            </div>
+            <div class="form-group">
+                <button class="account_button" (click)="saveAccountInfo()"
+                    [disabled]="!((accountForm.get('accountType')?.value == 'personal' || !isEUNation) ? (accountForm.valid && accountForm.get('confirmInfo')?.value) : (accountForm.valid && isVatValid && accountForm.get('confirmInfo')?.value))">
+                    Save and Continue
+                </button>
+            </div>
+        </form>
+    </div>
+    <!-- Modal -->
+    <div class="modal modal-lg fade" id="privacyModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="exampleModalLabel">Privacy Statement For Clients</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="privacy-statement" style="max-height: 400px;overflow-y: scroll;">
+                        <p>
+                            Personal Data Controller is: We.Stream B.V. seat and management address: Hornweg 7, 1432GD
+                            Aalsmeer, represented
+                            by Jurgen
+                            ter Hoeve, e-m: privacy@we.stream, telephone: 088-0048800 hereafter referred to as a
+                            We.Stream.
+                        </p>
+                        <p>
+                            This privacy statement constitutes an information message within the meaning of the General
+                            Data Protection
+                            Regulation /Regulation
+                            (EU) 2016/679 of the European Parliament and of the Council of 27.04.2016 or hereinafter
+                            referred to as the
+                            "Regulation"/.
+                        </p>
+                        <h3>Website and Webshop</h3>
+                        <p>
+                            This website and webshop has been compiled with the greatest care. Nevertheless, it is
+                            possible that the
+                            information shown
+                            here is not completely accurate (anymore). We.Stream does not warrant the accuracy or
+                            completeness of
+                            information
+                            on this website. We.Stream is free to modify the content of this website without notice.
+                        </p>
+                        <p>
+                            We.Stream is not liable for direct or indirect damages of any kind that result from or are
+                            in any way connected
+                            to the use
+                            of this website or the inability to access this website.
+                        </p>
+                        <p>
+                            Any references or links to other websites are for information purposes only except the links
+                            to PayPal and
+                            Rabobank who are
+                            for payment and issuing invoices. We.Stream has no control over these websites and does not
+                            warrant the accuracy
+                            and correctness of the information on these sites.
+                        </p>
+                        <p>
+                            Visitors of this website are not permitted to publish, copy or save any information, texts,
+                            images, products or
+                            services
+                            for any purpose other than personal use without written consent from We.Stream.
+                        </p>
+                        <h3>What we collect</h3>
+                        <p>
+                            We.Stream respects the privacy of all visitors of this website and will ensure that all
+                            personal information
+                            shared with
+                            us will be kept confidential.
+                        </p>
+                        <h4>Providing personal details</h4>
+                        <p>
+                            All personal data provided to us through an online form will primarily be used for the
+                            purpose that they were
+                            provided for,
+                            which is:
+                        <ul>
+                            <li>implementation of rights and obligations to provide services and goods of We.Stream;
+                            </li>
+                            <li>
+                                to communicate with you and inform you about new services and developments that we
+                                expect might be relevant
+                                for you. If you
+                                do not wish to be contacted by us, please contact us via info@we.stream and send us an
+                                e-mail “unsubscribe”;
+                            </li>
+                            <li>execution of obligations to the fisc;</li>
+                            <li>fulfillment of obligations under the General Data Protection Regulation, under other
+                                laws and regulations.
+                            </li>
+                        </ul>
+
+
+                        <p>
+                            The provision of personal data to We.Stream on behalf of its clients is voluntary and
+                            necessary in order to
+                            fulfill its obligations
+                            to provide services and deliver goods as well as to fulfill its legal obligations, such as
+                            issuing an invoice,
+                            filing
+                            tax returns and others. Providing the minimum data: first and last name of the client,
+                            permanent address of the
+                            client,
+                            current address of the client, address of client’s bank, is necessary for the fulfillment of
+                            the
+                            service/delivering
+                            goods from We.Stream and without it execution of the service/delivering goods will be
+                            impossible.
+                        </p>
+                        <h4>The legal basis for the processing of personal data is:</h4>
+                        <p>
+                        <ul>
+                            <li>an oral or written contract;</li>
+                            <li>the data subject has given consent to process his or her personal data;</li>
+                            <li>fulfilling a legal obligation;</li>
+                            <li>
+                                exercise of legal rights to protect the interests of We.Stream, including for the
+                                protection of the
+                                interests of We.Stream
+                                for the establishment and exercise by We.Stream of any services and selling goods.
+                            </li>
+                        </ul>
+
+
+                        <h4>Types of personal data that are collected and processed:</h4>
+                        <p>
+                        <ul>
+                            <li>
+                                physical identity and contact of a client: first and last name, permanent address,
+                                current address,
+                                telephone, email, address
+                                of client’s bank, date of birth, sex;
+                            </li>
+                            <li>identification number of companies and VAT number of a client. </li>
+                        </ul>
+
+                        <h4>Third parties</h4>
+                        <p>
+                            Personal data will be provided to: the entities/persons through whom the services/goods
+                            provided by We.Stream
+                            are paid, courier
+                            companies, tax authority of Holland, customs authority of Holland, subcontractors such as:
+                            reseller/distributor,
+                            etc. We.Stream does not intend to disclose personal data outside the European Union, to any
+                            third country or
+                            international
+                            organization unless expressly agreed upon and/or in compliance with legal requirements
+                            and/or the exercise of
+                            legal
+                            rights.
+                        </p>
+                        <h4>Retention</h4>
+                        <p>
+                            The provided personal data will be stored up to 7 years after termination of the legal
+                            relationship with the
+                            client, unless:
+                            a longer period is provided for by law or grounds for suspension of the limitation have
+                            occurred - with the time
+                            that the limitation does not run, the term under sentence one increases.
+                        </p>
+                        <h4>The subject of personal data has the following rights:</h4>
+                        <p>
+                        <ul>
+                            <li>
+                                to obtain from the controller a confirmation that personal data related to it is being
+                                processed and, if so,
+                                to access the
+                                data;
+                            </li>
+                            <li>to request the controller to correct inaccurate personal data relating to him without
+                                undue delay;</li>
+                            <li>
+                                request the controller to delete the related personal data without undue delay. The
+                                controller has the
+                                obligation to delete
+                                personal data without undue delay when there is a ground provided for in Regulation (EU)
+                                2016/679 of the
+                                European Parliament and of the Council of 27 April 2016 and where the reasons set out in
+                                that Regulation
+                                where that right can not be applied;
+                            </li>
+                            <li>
+                                to require the controller to restrict the processing of his personal data when the
+                                preconditions laid down
+                                in the Regulation;
+                            </li>
+                            <li>
+                                of data portability: to obtain the personal data which concern him and which he has
+                                provided to the
+                                controller in a structured,
+                                widely used and machine readable format, and has the right to transfer this data to
+                                another controller
+                                without
+                                hindering the controller, to the extent that the processing of these data are done in
+                                automated ways and
+                                are based on consent or contract with the subject;
+                            </li>
+                            <li>
+                                right of objection: the personal data subject may at any time object to the processing
+                                of his or her
+                                personal data. In the
+                                case of an objection received by the Controller, the controller will discontinue the
+                                processing of personal
+                                data of the entity at its disposal except where there is a legitimate ground for
+                                processing that takes
+                                priority
+                                over the data subjects' entreaties, rights and freedoms, or where they are necessary for
+                                the establishment,
+                                exercise or protection of legal claims;
+                            </li>
+                            <li>
+                                in cases where the processing of personal data is based on consent, the data subject has
+                                the right to
+                                withdraw his/her consent
+                                to the processing of his/her personal data at any time with a specific written notice
+                                addressed to
+                                We.Stream.
+                                This right is without prejudice to the lawfulness of consent-based processing before it
+                                is withdrawn. This
+                                right is not applicable when We.Stream has the right to continue processing personal
+                                data on the grounds
+                                of a legitimate interest or the processing of personal data is necessary to comply with
+                                a legal obligation
+                                that applies to We.Stream;
+                            </li>
+                            <li>
+                                at any time, to object processing for the purposes of the direct marketing of personal
+                                data relating to him
+                                for this type
+                                of marketing, which includes profiling as far as it relates to direct marketing. In the
+                                case of an objection
+                                received by the Controller, the latter will cease processing for the purposes of the
+                                direct marketing of
+                                the entity's personal data;
+                            </li>
+                            <li>
+                                not to be the subject of a decision based solely on automated processing involving
+                                profiling which produces
+                                legal consequences
+                                for the data subject or similarly affects him substantially;
+                            </li>
+                            <li>
+                                to appeal: every personal data subject has the right to appeal to a supervisor authority
+                                when he/she
+                                believes that his/her
+                                rights have been violated. The leading supervisor authority for the cross-border
+                                processing carried out by
+                                the Controller is The Dutch DPA.
+                            </li>
+                        </ul>
+
+                        <h4>Detail analysis and cookies</h4>
+                        <p>
+                            Apart from details provided by visitors, We.Stream also collects visitor data through
+                            so-called ‘cookies’. This
+                            information
+                            allows us to improve our services and our website. All data collected this way is anonymous
+                            and cannot be used
+                            to
+                            trace personal details. We collect details of certain information about the visitors to our
+                            website for system
+                            administration
+                            purposes. This is: their device’s IP address, operating system and browser type.
+                        </p>
+                        <p>
+                            Cookies are also used to save user names, passwords and personal settings, ensuring that you
+                            do not have to
+                            re-enter your
+                            details during your next visit. Most web browsers offer you the option to block cookies or
+                            to receive a warning
+                            when
+                            a website tries to set a cookie. Disabling cookies can reduce usability of our website and
+                            services.
+                        </p>
+                        <h4>External parties</h4>
+                        <p>
+                            This website might contain links to external websites. We.Stream is not responsible for the
+                            contents of these
+                            external websites
+                            or their privacy policies.
+                        </p>
+                        <p>
+                            We.Stream will not sell your personal details to third parties and will only provide these
+                            to third parties when
+                            this is
+                            necessary for service selected by you. It is also possible that details must be supplied to
+                            external parties as
+                            the
+                            result of a legal obligation or conflict.
+                        </p>
+                        <h4>Changes to this privacy statement</h4>
+                        <p>
+                            We.Stream reserves the right to make changes to the contents of this Privacy statement. In
+                            this case you will
+                            always find
+                            the most recent information on this page.
+                        </p>
+                        <h4>DECLARATION by the data subject</h4>
+                        <p>
+                            With clicking on the button „I agree with the privacy statement and terms and conditions”
+                            the data subject
+                            declares that:
+                        <ul>
+                            <li>he/she is over 16 years old;</li>
+                            <li>
+                                We.Stream gave him/her the information under Regulation (EU) 2016/679 of the European
+                                Parliament and of the
+                                Council of 27
+                                April 2016. It is contained on the site: www.we.stream in the privacy statement for
+                                clients on processing
+                                of personal data, which is short, transparent, easy and simple, and is understandable to
+                                him/her;
+                            </li>
+                            <li>
+                                he/she hereby provides freely the explicit consent to We.Stream to process his/her
+                                personal data that he/she
+                                provides them
+                                under the terms of the privacy statement for clients described on the site:
+                                www.we.stream.
+                            </li>
+                        </ul>
+
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
