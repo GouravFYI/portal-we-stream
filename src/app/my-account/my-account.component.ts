@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApisService } from '../apis.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-my-account',
   templateUrl: './my-account.component.html',
@@ -18,7 +19,7 @@ export class MyAccountComponent implements OnInit {
     message: "Enter valid VAT Number",
     class: 'text-secondary'
   }
-  constructor(private api: ApisService, private fb: FormBuilder) {
+  constructor(private api: ApisService, private fb: FormBuilder, private router:Router) {
     this.accountForm = this.fb.group(
       {
         accountType: ['personal', Validators.required],
@@ -47,12 +48,17 @@ export class MyAccountComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getCountryList()
-    this.populateForm()
+    if(sessionStorage.getItem('bundleInfo')){
+      this.getCountryList()
+      this.populateForm()
+    }else{
+      this.router.navigate(['/login'])
+    }
   }
 
   saveAccountInfo() {
     localStorage.setItem('account-data', JSON.stringify(this.accountForm.value))
+    this.router.navigate(['/data-plans'])
   }
 
   populateForm() {
@@ -60,7 +66,7 @@ export class MyAccountComponent implements OnInit {
     if (data !== null || data !== undefined) {
       let accountData = JSON.parse(data)
       this.accountForm.setValue({
-        accountType: accountData.accountType || '',
+        accountType: accountData.accountType || 'personal',
         firstName: accountData.firstName || '',
         lastName: accountData.lastName || '',
         email: accountData.email || '',
@@ -83,6 +89,7 @@ export class MyAccountComponent implements OnInit {
         confirmInfo: accountData.confirmInfo || false
       });
       this.isEUNation = this.api.euCountryList()[accountData.countryOfOrigin] !== undefined ? true : false
+      this.accountType = accountData.accountType
     }
   }
 
@@ -106,7 +113,7 @@ export class MyAccountComponent implements OnInit {
   validateVat(event: any) {
     let vatNumber = event.target.value
     let countryCode: any = this.accountForm.get('countryOfOrigin')?.value
-    if (countryCode !== '') {
+    if (countryCode !== '' && vatNumber.length >= 9) {
       this.api.vatValidation(vatNumber, countryCode).subscribe(resp => {
         this.isVatValid = resp?.isValid
         if (resp?.isValid) {
@@ -137,7 +144,7 @@ export class MyAccountComponent implements OnInit {
     this.accountForm.patchValue({
       bankCountry: this.api.countryCodeList()[countryOfOrigin]
     })
-    if (vat == '') return
+    if (vat == '' || vat.length < 9) return
     else {
       this.api.vatValidation(vat, countryOfOrigin).subscribe(resp => {
         this.isVatValid = resp?.isValid

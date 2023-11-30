@@ -13,8 +13,15 @@
                 </div>
             </div>
         </div>
-        <div class="my_bundle_no_data" *ngIf="activeBundle.length == 0">
-            No Active Bundle Found
+        <div class="col-md-12">
+            <div class="my_bundle_no_data" *ngIf="activeBundle.length == 0">
+                <div>
+                    No Active Bundle Found
+                </div>
+                <div>
+                    <button class="recharge_button" (click)="navigateToDataPlans()">Recharge</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -32,11 +39,13 @@
                 </div>
             </div>
         </div>
-        <div class="my_bundle_no_data" *ngIf="readyForUsageBundle.length == 0">
-            <span>No Ready To Use Bundles Found</span> 
-            <small class="form-text text-success mt-1"
-                    style="font-size: 10px;margin-left: 5px;font-weight: 600;">* These Bundles get Activated as soon as 
-                your current Data Plan expires.You can recharge them prior to the current bundle expiry</small>
+        <div class="col-md-12">
+            <div class="my_bundle_no_data" *ngIf="readyForUsageBundle.length == 0">
+                <span>No Ready To Use Bundles Found</span> 
+                <small class="form-text text-success mt-1"
+                        style="font-size: 10px;margin-left: 5px;font-weight: 600;">* These Bundles get Activated as soon as 
+                    your current Data Plan expires. You can recharge them prior to the current bundle expiry</small>
+            </div>
         </div>
     </div>
 
@@ -55,8 +64,10 @@
                 </div>
             </div>
         </div>
-        <div class="my_bundle_no_data" *ngIf="historyBundles.length == 0">
-            No Purchase History Found
+        <div class="col-md-12">
+            <div class="my_bundle_no_data" *ngIf="historyBundles.length == 0">
+                No Purchase History Found
+            </div>
         </div>
     </div>
 </div>

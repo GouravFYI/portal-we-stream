@@ -1,0 +1,37 @@
+.data_plan_container {
+    font-family: 'Montserrat', 'sans-serif';
+    max-width: 700px;
+}
+
+.data_plan_header {
+    display: flex;
+    font-weight: bold;
+    color: #1f1f1f;
+    font-size: 25px;
+    justify-content: center;
+    align-items: center;
+}
+
+.data_pack_title {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.data_plan_card {
+    max-height: 80px;
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.data_plan_button {
+    border: 0;
+    padding: 4px 6px;
+    border-radius: 50px;
+    background-color: black;
+    color: white;
+    font-size: 12px;
+    width: 60px;
+    box-sizing: border-box;
+}

@@ -60,4 +60,8 @@ export class MyBundleComponent implements OnInit {
     return formattedDate
   }
 
+  navigateToDataPlans(){
+    this.router.navigate(['/data-plans'])
+  }
+
 }
