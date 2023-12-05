@@ -7,6 +7,7 @@ import { CountryOverviewComponent } from './country-overview/country-overview.co
 import { MyAccountComponent } from './my-account/my-account.component';
 import { DataPlansComponent } from './data-plans/data-plans.component';
 import { LoginComponent } from './login/login.component';
+import { PaymentComponent } from './payment/payment.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,6 +18,11 @@ const routes: Routes = [
   {path:'vpn', component:VpnComponent},
   {path:'refer', component:ReferralComponent},
   {path:'countries', component:CountryOverviewComponent},
+  {
+    path: 'payment',
+    component: PaymentComponent,
+    data: { customData: null }
+  }
 ];
 
 @NgModule({

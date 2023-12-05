@@ -51,11 +51,12 @@
 }
 
 .recharge_button {
-    border: none;
     width: 120px;
     font-size: 14px;
-    background-color: black;
-    color: white;
+    background-color: rgb(255 255 255);
+    color: red;
     padding: 5px 10px;
-    border-radius: 50px;
+    border-radius: 10px;
+    border: 1px solid red;
+    font-weight: bolder;
 }

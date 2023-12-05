@@ -57,7 +57,11 @@ export class MyAccountComponent implements OnInit {
   }
 
   saveAccountInfo() {
-    localStorage.setItem('account-data', JSON.stringify(this.accountForm.value))
+    let info = {
+      ...this.accountForm.value,
+      countryName : this.api.euCountryList()[this.accountForm.value?.countryOfOrigin]
+    }
+    localStorage.setItem('account-data', JSON.stringify(info))
     this.router.navigate(['/data-plans'])
   }
 

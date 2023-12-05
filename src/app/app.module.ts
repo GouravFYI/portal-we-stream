@@ -12,6 +12,7 @@ import { DataPlansComponent } from './data-plans/data-plans.component';
 import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PaymentComponent } from './payment/payment.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReferralComponent,
     MyAccountComponent,
     DataPlansComponent,
-    LoginComponent
+    LoginComponent,
+    PaymentComponent
   ],
   imports: [
     BrowserModule,

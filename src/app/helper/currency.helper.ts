@@ -2,7 +2,7 @@ export class Currency {
     name: string;
     sign: string;
 
-    constructor(client: { customCountry?: string; countryOfOrigin?: string }) {
+    constructor(client: { customCountry?: string|null; countryOfOrigin?: string }) {
         if (client.customCountry) {
             switch (client.customCountry) {
                 case 'PH':

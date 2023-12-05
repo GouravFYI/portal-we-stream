@@ -1,29 +1,200 @@
 <div class="container mt-4 data_plan_container">
     <h2 class="mb-4 data_plan_header">Available Data Plans</h2>
-    <div class="row" *ngFor="let rowIndex of getRows()">
-        <div class="col-md-12 mb-4" *ngFor="let bundle of getBundlesInRow(rowIndex)">
-            <div class="card data_plan_card">
-                <div class="card-body">
-                    <div>
-                        <h5 class="card-title data_pack_title">{{computeBundleName(bundle?.goodsName)}}</h5>
+    <!-- PKAG Bundles -->
+    <div class="container" *ngIf="packageBundle.length !== 0">
+        <div class="bundle_category">Package Bundles</div>
+        <div class="row" *ngFor="let bundle of packageBundle">
+            <div class="col-md-12 mb-4">
+                <div class="card data_plan_card">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title data_pack_title">{{computeBundleName(bundle?.goodsName)}}</h5>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="width: 160px; justify-content: space-between;">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <p class="card-text" style="font-size: 14px;">
+                                        <i class="bi bi-tags-fill text-success"
+                                            style="font-size: 1rem"></i>&nbsp;&nbsp;<span style="font-weight: 600;"
+                                            [innerHTML]="computeBundlePrice(bundle?.customCountry, bundle?.goodsPrice)"></span>
+                                    </p>
+                                </div>
+                                <!-- <div class="d-flex justify-content-center align-items-center"
+                                    *ngIf="bundle?.goodsType == 'PKAG' && bundle?.attrMap !== null">
+                                    <p class="card-text" style="font-size: 14px;">
+                                        <i class="bi bi-arrow-down-up text-primary"></i>&nbsp;&nbsp;<span
+                                            style="font-weight: 600;">{{bytesToNearestGB(bundle?.attrMap?.flowSize)}}</span>
+                                    </p>
+                                </div> -->
+                            </div>
+                            <div>
+                                <button class="data_plan_button" data-bs-toggle="modal" data-bs-target="#paymentModal"
+                                    (click)="checkoutOrder(bundle)">{{getBundleTypeFreeOrOrder(bundle)}}</button>
+                            </div>
+                        </div>
                     </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <div class="d-flex" style="width: 160px; justify-content: space-between;">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <p class="card-text" style="font-size: 14px;">
-                                    <i class="bi bi-tags-fill text-success" style="font-size: 1rem;"></i>&nbsp;&nbsp;<span style="font-weight: 600;" 
-                                    [innerHTML]="computeBundlePrice(bundle?.currencyType, bundle?.goodsPrice)"></span>
-                                </p>
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center" *ngIf="bundle?.goodsType == 'PKAG'">
-                                <p class="card-text" style="font-size: 14px;">
-                                    <i class="bi bi-arrow-down-up text-primary"></i>&nbsp;&nbsp;<span style="font-weight: 600;">{{bytesToNearestGB(bundle?.attrMap?.flowSize)}}</span>
-                                </p>
-                            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DISC Bundles -->
+    <div class="container" *ngIf="discBundle.length !== 0">
+        <div class="bundle_category" style="margin-top: 10px;">Unlimited Data Pack Bundles</div>
+        <div class="row" *ngFor="let bundle of discBundle">
+            <div class="col-md-12 mb-4">
+                <div class="card data_plan_card_unlimited">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title data_pack_title">{{computeBundleName(bundle?.goodsName)[0]}}</h5>
                         </div>
                         <div>
-                            <button class="data_plan_button">Order</button>
+                            <p class="card-text" style="font-size: 12px;">
+                                <i class="bi bi-arrow-down-up text-primary"></i>&nbsp;&nbsp;<span
+                                    style="font-weight: 600;">{{computeBundleName(bundle?.goodsName)[1]}}</span>
+                            </p>
                         </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <div class="d-flex" style="width: 160px; justify-content: space-between;">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <p class="card-text" style="font-size: 14px;">
+                                        <i class="bi bi-tags-fill text-success"
+                                            style="font-size: 1rem;"></i>&nbsp;&nbsp;<span style="font-weight: 600;"
+                                            [innerHTML]="computeBundlePrice(bundle?.customCountry, bundle?.goodsPrice)"></span>
+                                    </p>
+                                </div>
+                                <!-- <div class="d-flex justify-content-center align-items-center"
+                                    *ngIf="bundle?.goodsType == 'PKAG' && bundle?.attrMap !== null">
+                                    <p class="card-text" style="font-size: 14px;">
+                                        <i class="bi bi-arrow-down-up text-primary"></i>&nbsp;&nbsp;<span
+                                            style="font-weight: 600;">{{bytesToNearestGB(bundle?.attrMap?.flowSize)}}</span>
+                                    </p>
+                                </div> -->
+                            </div>
+                            <div>
+                                <button class="data_plan_button" data-bs-toggle="modal" data-bs-target="#paymentModal"
+                                    (click)="checkoutOrder(bundle)">{{getBundleTypeFreeOrOrder(bundle)}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="row">
+        <div class="modal fade payment_modal" data-bs-backdrop="static" id="paymentModal" tabindex="-1"
+            aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header d-flex justify-content-center">
+                        <h5 class="modal-title" id="paymentModalLabel" style="font-weight:600;">Checkout</h5>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="text-success" style="margin-bottom: 5px;font-weight: bold;">Order Summary</h6>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>{{ orderSymmary?.name }}</td>
+                                    <td [innerHTML]="orderSymmary?.bundlePrice"></td>
+                                </tr>
+                                <tr>
+                                    <td>Transaction Fees ( {{tranxFees}} %)</td>
+                                    <td
+                                        [innerHTML]="orderSymmary?.currencySign + ' ' + orderSymmary?.transactionFees + ' /-'">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>VAT ( {{orderSymmary?.vatPercent}} %)</td>
+                                    <td [innerHTML]="orderSymmary?.currencySign + ' ' + orderSymmary?.vat + ' /-'"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-success">Total Amount</td>
+                                    <td class="text-success"
+                                        [innerHTML]="orderSymmary?.currencySign + ' ' + orderSymmary?.total + ' /-'">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-3">
+                            <h6 class="text-secondary" style="margin-bottom: 5px;font-weight: bold;">Billing Details
+                            </h6>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Full Name</td>
+                                        <td [innerHTML]="billingDetails?.name"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email Address</td>
+                                        <td [innerHTML]="billingDetails?.email"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Country of Origin</td>
+                                        <td [innerHTML]="billingDetails?.country"></td>
+                                    </tr>
+                                    <tr *ngIf="billingDetails?.vat !== ''">
+                                        <td>VAT Number</td>
+                                        <td [innerHTML]="billingDetails?.vat"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>IMEI Number</td>
+                                        <td [innerHTML]="billingDetails?.imei"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="margin-bottom: 10px;" *ngIf="orderSymmary?.goodsCode == 'Roamability_500M_DP' || orderSymmary?.goodsCode == 'Roamability_3500M_DP'">
+                            <label class="text-secondary" style="font-size: 15px;font-weight: 600;">Select Country of Usage</label>
+                            <select class="form-select" required
+                                (change)="modifyBundleCountry($event)">
+                                <option value="NOTVALID" selected disabled>Select country</option>
+                                <option *ngFor="let country of countryList" [value]="country.cc">{{ country.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="orderSymmary?.bundleType !== 'Free'">
+                            <div>
+                                <h6 class="text-secondary" style="margin-bottom: 5px;font-weight: bold;">Payment Method
+                                </h6>
+                                <div class="payment_option">
+                                    <div class="col-md-6 payment_type">
+                                        <div class="form-check payment_radio">
+                                            <input type="radio" class="form-check-input" value="creditcard"
+                                                id="creditCardRadio" name="paymentMethod" (click)="paymentMethod('cc')"
+                                                checked>
+                                            <label class="form-check-label" for="creditCardRadio"></label>
+                                        </div>
+                                        <div>
+                                            <img style="margin-bottom: 5px;" src="../../assets/images/credit-card.png"
+                                                alt="" srcset="" width="25px">
+                                        </div>
+                                        <div>
+                                            <span>Credit Card</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 payment_type">
+                                        <div class="form-check payment_radio">
+                                            <input type="radio" class="form-check-input" value="paypal" id="payPalRadio"
+                                                name="paymentMethod" (click)="paymentMethod('pp')">
+                                            <label class="form-check-label" for="payPalRadio"></label>
+                                        </div>
+                                        <div>
+                                            <img src="../../assets/images/paypal.png" alt="" srcset="" width="25px">
+                                        </div>
+                                        <div>
+                                            <span>PayPal</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success cancel_button" data-bs-dismiss="modal"
+                            (click)="purchaseBundle()">Purchase</button>
+                        <button type="button" class="btn btn-danger cancel_button" data-bs-dismiss="modal"
+                            (click)="cancelPaymentInput()">Cancel</button>
                     </div>
                 </div>
             </div>
