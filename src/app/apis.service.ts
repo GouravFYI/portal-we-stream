@@ -19,7 +19,16 @@ export class ApisService {
     return this.httpClient.post(url, body, {
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
+    });
+  }
+
+  private performPostRequestMollie(url: string, body?: any): Observable<any> {
+    return this.httpClient.post(url, body, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      responseType: 'text',
     });
   }
 
@@ -253,7 +262,8 @@ export class ApisService {
     }
 
     const url = `${this.API_URL}payment?${new URLSearchParams(params).toString()}`;
-    return this.performPostRequest(url, JSON.stringify(accountData));
+    console.log(url)
+    return this.performPostRequestMollie(url, JSON.stringify(accountData));
   }
 
   directPurchase(params: any, accountData: any): Observable<any> {
@@ -285,14 +295,14 @@ export class ApisService {
     return this.performPostRequest(url, JSON.stringify(accountData));
   }
 
-  verifyCreditCardPayment(orderId: string, imei: string): Observable<any> {
+  verifyCreditCardPayment(orderId: string, imei: any): Observable<any> {
     const params = {
       orderId: orderId,
       imei: imei
     };
 
     const url = `${this.API_URL}payment_callback?${new URLSearchParams(params).toString()}`;
-    return this.performPostRequest(url, null);
+    return this.performPostRequestMollie(url, null);
   }
 
   saveAccount(accountData: any): Observable<any> {
@@ -327,7 +337,7 @@ export class ApisService {
     return this.performPostRequest(`${this.API_URL}payment/lengers-initial`, JSON.stringify(data));
   }
 
-  initPaypalPayment(accountData: any, bundle: any, ait: string): Observable<any> {
+  initPaypalPayment(accountData: any, bundle: any, ait: any): Observable<any> {
     let params = `imei=${accountData.imei || bundle.imei}&dataPlan=${bundle.dataPlan}&bundleCode=${bundle.code}&currency=${bundle.currency}`;
 
     if (ait) {

@@ -190,9 +190,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success cancel_button" data-bs-dismiss="modal"
+                    <div class="modal-footer" style="position: relative;">
+                        <div *ngIf="isLoadingPurchase" style="position: absolute; left:16px">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <button type="button" style="background-color: #009cde;color: white;" class="btn cancel_button" id="credit-card-button"
                             (click)="purchaseBundle()">Purchase</button>
+                        <div id="paypal-button-container" style="display: none;margin-top:15px"></div>
                         <button type="button" class="btn btn-danger cancel_button" data-bs-dismiss="modal"
                             (click)="cancelPaymentInput()">Cancel</button>
                     </div>

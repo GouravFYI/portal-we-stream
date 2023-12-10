@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+declare global {
+  interface Window {
+    paypal: any; // Assuming 'paypal' is an external library without type definitions
+  }
+}
+import { Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { Currency } from '../helper/currency.helper';
 import { Vat } from '../helper/vat.helper';
 import { ApisService } from '../apis.service';
-import { error } from 'console';
+import { PaymentstatusService } from '../service/paymentstatus.service';
 @Component({
   selector: 'app-data-plans',
   templateUrl: './data-plans.component.html',
   styleUrls: ['./data-plans.component.css']
 })
-export class DataPlansComponent implements OnInit {
+export class DataPlansComponent implements OnInit{
 
   bundleInfo: any = []
   packageBundle: any = []
@@ -22,7 +27,11 @@ export class DataPlansComponent implements OnInit {
   tranxFees: string = '3'
   countryList: any = []
   bundleCountry: string = 'NOTVALID'
-  constructor(private router: Router, private api: ApisService) { }
+  paymentTool: string = 'cc'
+  isPaypalInit:boolean = false
+  isLoadingPurchase: boolean = false
+  constructor(private router: Router, private api: ApisService,
+    private paymentStatus: PaymentstatusService) { }
 
   ngOnInit(): void {
     this.getBundleInfo()
@@ -151,6 +160,10 @@ export class DataPlansComponent implements OnInit {
 
     this.billingDetails = billingDetails
     this.orderSymmary = obj
+    if(!this.isPaypalInit){
+      this.makePayment(obj)
+    }
+    this.isPaypalInit = true
   }
 
   cancelPaymentInput() {
@@ -158,6 +171,8 @@ export class DataPlansComponent implements OnInit {
     this.billingDetails = null
     this.bundleCountry = 'NOTVALID'
     this.tranxFees = '3'
+    this.paymentTool = 'cc'
+    this.isPaypalInit = false
     document.querySelectorAll<HTMLInputElement>('#creditCardRadio').forEach(radio => radio.checked = true);
     document.querySelectorAll<HTMLInputElement>('#payPalRadio').forEach(radio => radio.checked = false);
   }
@@ -166,9 +181,23 @@ export class DataPlansComponent implements OnInit {
     if (type == 'pp') {
       this.checkoutOrder(this.selectedBundle, 0.04)
       this.tranxFees = '4'
+      this.paymentTool = 'pp'
+      document.querySelectorAll<HTMLInputElement>('#paypal-button-container').forEach(element => {
+        element.style.display = 'block';
+      });
+      document.querySelectorAll<HTMLInputElement>('#credit-card-button').forEach(element => {
+        element.style.display = 'none';
+      });
     } else {
       this.checkoutOrder(this.selectedBundle, 0.03)
       this.tranxFees = '3'
+      this.paymentTool = 'cc'
+      document.querySelectorAll<HTMLInputElement>('#paypal-button-container').forEach(element => {
+        element.style.display = 'none';
+      });
+      document.querySelectorAll<HTMLInputElement>('#credit-card-button').forEach(element => {
+        element.style.display = 'block';
+      });
     }
   }
 
@@ -201,25 +230,58 @@ export class DataPlansComponent implements OnInit {
         ait: null
       }
       let accountData = this.parseAccountInfo(parsedData?.accountType)
-      this.api.directPurchase(params,accountData).subscribe(resp => {
+      this.isLoadingPurchase = true
+      this.api.directPurchase(params, accountData).subscribe(resp => {
         let paymentStatus = {
-          status : 'success',
-          message : "You have successfully purchased your bundle!",
-          text1 : "If you are still on an active data plan, your new data plan will be activated as soon as your current plan is consumed or expired.",
-          text2 : "In case you see -- in your home screen instead of the remaining GB, please reboot your device."
+          status: 'success',
+          paymentType: 'direct'
         }
         this.removePurchasedBundleFromSession(this.orderSymmary?.goodsCode)
-        this.router.navigate(['/payment'], { state: { paymentStatus } });
-
-      },(error) => {
+        this.paymentStatus.setpaymentStatus(paymentStatus)
+        this.isLoadingPurchase = false
+        this.router.navigate(['/payment']);
+      }, (error) => {
         let paymentStatus = {
-          status : 'error', 
-          message : "Your Transaction Failed",
-          text1 : "Please contact user support",
-          info : ["email: info@we.stream","USA: +1 (424) 214-3131","Europe: +31 (0)88 004 8888"]
+          status: 'error',
+          paymentType: 'direct'
         }
-        this.router.navigate(['/payment'], { state: { paymentStatus } });
+        this.paymentStatus.setpaymentStatus(paymentStatus)
+        this.isLoadingPurchase = false
+        this.router.navigate(['/payment']);
       })
+    } else {
+      if (this.paymentTool == 'cc') {
+        let cardData = {
+          price: this.computePrice(this.orderSymmary?.goodsPrice),
+          dataPlan: this.orderSymmary?.goodsName,
+          imei: imeival,
+          tax: this.orderSymmary?.vat,
+          currency: this.currencyType?.name,
+          bundleCode: this.orderSymmary?.goodsCode,
+          bundleCountry: this.bundleCountry,
+          paymentMethod: 'creditcard',
+          voucherId: '',
+          callbackDomain: `${window.location.origin}/payment?deviceId=null&paymentType=cc&goodsCode=${this.orderSymmary?.goodsCode}`
+        }
+        let accountData = this.parseAccountInfo(parsedData?.accountType)
+        this.isLoadingPurchase = true
+        this.api.payCreditCard(cardData, accountData).subscribe(resp => {
+          this.isLoadingPurchase = false
+          window.location.href = resp
+          // window.open(resp)
+        }, (error) => {
+          let paymentStatus = {
+            status: 'default',
+            paymentType: 'cc'
+          }
+          this.paymentStatus.setpaymentStatus(paymentStatus)
+          this.isLoadingPurchase = false
+          this.router.navigate(['/payment']);
+        })
+      } else {
+        // Paypal Logic
+
+      }
     }
   }
 
@@ -266,7 +328,7 @@ export class DataPlansComponent implements OnInit {
         "countryName": parsedData?.countryName || null
       };
       return newData;
-    }else {
+    } else {
       const newData = {
         "accountType": "business",
         "imei": imeival,
@@ -297,6 +359,192 @@ export class DataPlansComponent implements OnInit {
       return newData;
     }
   }
+
+  // paypal payment function - very complex code
+  makePayment(orderSummary: any) {
+    let paypalButtonContainer = document.querySelectorAll('#paypal-button-container');
+    paypalButtonContainer.forEach(function(element) {
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+    });
+
+    let imei: any = sessionStorage.getItem('imei')
+    let imeival = JSON.parse(imei)
+    let data: any = localStorage.getItem('account-data')
+    let parsedData = JSON.parse(data)
+    let price = this.computePrice(this.orderSymmary?.goodsPrice)
+    let accountData = this.parseAccountInfo(parsedData?.accountType)
+    let clientSummary = this.getClientSummary(accountData)
+    let bundle = {
+      price: price,
+      vatNumber: orderSummary?.vatNumber,
+      currency: this.currencyType.name,
+      dataPlan: orderSummary?.goodsName,
+      code: orderSummary.goodsCode,
+      imei: imeival,
+      bundleCountry : this.bundleCountry
+    }
+    this.api.initPaypalPayment(accountData, bundle, null).subscribe(resp => {
+      window.paypal.Button.render({
+        env: 'production', // sandbox | production
+        style: {
+          layout: 'vertical', // horizontal | vertical
+          size: 'responsive', // medium | large | responsive
+          shape: 'pill', // pill | rect
+          color: 'blue' // gold | blue | silver | black
+        },
+        funding: {
+          allowed: [],
+          disallowed: [window.paypal.FUNDING.CREDIT, window.paypal.FUNDING.CARD]
+        },
+
+        // PayPal Client IDs - replace with your own
+        // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+        client: {
+          sandbox: 'AQ-AV25HO7ASaJC-gpp5gIAySfOLc5dZxQr_JluTHQ-bYYeIAd3kwdPCAX1hVrKXiBLwx3dtKp_qScNu',
+          production: 'AbyF2iwpLew5Ek2dbEB5ktuT5AAYd6kMvRPbCfvDP-xCFx9UvKjBOLtUXGq4aYu-Rl29mLAElqQn3FHr'
+        },
+        payment: function (data:any, actions:any) {
+          let handlingFee = orderSummary?.transactionFees
+          let subtotal = price
+          let tax = orderSummary?.vat;
+          let total = orderSummary?.total;
+
+          return actions.payment.create({
+            payment: {
+              transactions: [{
+                amount: {
+                  total: total,
+                  currency: bundle.currency,
+                  details: {
+                    subtotal: subtotal,
+                    tax: tax,
+                    handling_fee: handlingFee
+                  }
+                },
+                description: bundle.dataPlan.replace(new RegExp('<br/>', 'g'), ' ') + ' for device ' + accountData.imei + ' | VAT Number: NL858302238B01',
+                custom: clientSummary
+                // invoice_number: invoiceNumber
+              }]
+            }
+          });
+        },
+        onAuthorize: (data: any, actions: any) => {
+          return actions.payment.execute().then((paymentObject:any)=> {
+
+            //TODO: UNCOMMENT WHEN BRINGING BACK TIMEZONED BUNDLES
+            // let bundleCountry = 'TMPCNTRVL';
+            let params = {
+              bundlePrice: bundle.price,
+              imei: bundle.imei,
+              paymentId: paymentObject.id,
+              paymentState: paymentObject.state,
+              bundleCountry: bundle.bundleCountry,
+              paymentCreateDate: paymentObject.create_time
+            };
+
+            this.api.payPaypal(bundle.code, params).subscribe(resp => {
+              let paymentStatus = {
+                status: 'success',
+                paymentType: 'pp'
+              }
+              this.paymentStatus.setpaymentStatus(paymentStatus)
+              this.router.navigate(['/payment']);
+            },(error) => {
+              let paymentStatus = {
+                status: 'error',
+                paymentType: 'pp'
+              }
+              this.paymentStatus.setpaymentStatus(paymentStatus)
+              this.router.navigate(['/payment']);
+            })
+          });
+
+        },
+        onError: function (error:any) {
+          let paymentStatus = {
+            status: 'default',
+            paymentType: 'pp'
+          }
+          this.paymentStatus.setpaymentStatus(paymentStatus)
+          this.router.navigate(['/payment']);
+        }
+
+      }, '#paypal-button-container');
+
+    })
+  }
+
+  getClientSummary(accountData: any): any {
+    let result = `Type:${accountData.accountType}*`;
+    let shortResult = '';
+    let addressSummary = '';
+    let shortAddressSummary = '';
+    let businessSummary = '';
+    let shortBusinessSummary = '';
+    result = result + `Country of origin: ${accountData.countryOfOrigin}*`;
+    shortResult = accountData.countryOfOrigin;
+    if (
+      accountData.rCountry !== accountData.pCountry &&
+      accountData.rCity !== accountData.pCity &&
+      accountData.rAddress !== accountData.pAddress
+    ) {
+      addressSummary =
+        addressSummary +
+        `Resident address: ${accountData.rCountry}, ${accountData.rCity}, ${accountData.rAddress}*`;
+      addressSummary =
+        addressSummary +
+        `Permanent address: ${accountData.pCountry}, ${accountData.pCity}, ${accountData.pAddress}*`;
+      shortAddressSummary = `${accountData.rCountry}|${accountData.rCity}|${accountData.rAddress}|${accountData.pCountry}|${accountData.pCity}|${accountData.pAddress}`;
+    } else {
+      addressSummary =
+        addressSummary + `Address: ${accountData.pCountry}, ${accountData.pCity}, ${accountData.pAddress}*`;
+      shortAddressSummary = `${accountData.rCountry}|${accountData.rCity}|${accountData.rAddress}`;
+    }
+
+    if (accountData.bankCountry !== accountData.rCountry) {
+      addressSummary = addressSummary + `Bank country: ${accountData.bankCountry}`;
+      shortAddressSummary = shortAddressSummary + `|${accountData.bankCountry}`;
+    }
+
+    if (accountData.accountType === 'business') {
+      businessSummary = businessSummary + `*Company Data* ID: ${accountData.companyId}*`;
+      businessSummary = businessSummary + `Name: ${accountData.companyName}*`;
+      businessSummary = businessSummary + `Address: ${accountData.companyAddress}*`;
+      businessSummary = businessSummary + `VAT: ${accountData.vatNumber}`;
+      shortBusinessSummary = `${accountData.companyId}|${accountData.companyName}|${accountData.companyAddress}|${accountData.vatNumber}`;
+    }
+
+    if (result.length + addressSummary.length <= 255) {
+      result = result + addressSummary;
+      if (accountData.accountType === 'business') {
+        if (result.length + businessSummary.length <= 255) {
+          result = result + businessSummary;
+        } else {
+          result = `${shortResult}|${shortAddressSummary}|${shortBusinessSummary}`;
+          if (result.length > 255) {
+            if (accountData.accountType === 'business') {
+              result = `${shortResult}|${shortBusinessSummary}`;
+            } else {
+              result = `${shortResult}|${shortAddressSummary}`;
+            }
+          }
+        }
+      }
+    } else {
+      result = `${shortResult}|${shortAddressSummary}|${shortBusinessSummary}`;
+      if (result.length > 255) {
+        if (accountData.accountType === 'business') {
+          result = `${shortResult}|${shortBusinessSummary}`;
+        } else {
+          result = `${shortResult}|${shortAddressSummary}`;
+        }
+      }
+    }
+    return result.substring(0, 255);
+  }
+
 
 }
 

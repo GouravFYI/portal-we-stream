@@ -1,1 +1,182 @@
-<p>payment works!</p>
+<div class="container payment_container">
+    <div class="row" class="h-100 payment_row" *ngIf="status == 'success'">
+        <div class="row status_icon">
+            <img src="../../assets/images/confirm.png" alt="" srcset="" style="width: 80px;">
+        </div>
+        <div class="row payment_content">
+            <span style="font-weight: 600;font-size: 13px;">You have successfully purchased your bundle!</span>
+        </div>
+        <div class="row payment_content">
+            <div>
+                <span>
+                    <i class="bi bi-info-circle text-primary" style="font-size: 16px;"></i>
+                </span>
+                <span style="font-weight: 500;font-size: 13px;">
+                    If you are still on an active data plan, your new data plan will be activated as soon as your
+                    current plan is consumed or expired.
+                </span>
+            </div>
+            <div>
+                <span>
+                    <i class="bi bi-info-circle text-primary" style="font-size: 16px;"></i>
+                </span>
+                <span style="font-weight: 500;font-size: 13px;">
+                    In case you see -- in your home screen instead of the remaining GB, please reboot your device.
+                </span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="custom_button" (click)="fetchUpdatedBundleInfo()" [disabled]="isConfirmReturnLoading">
+                <span>Return</span>
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+        <div class="mt-3 d-flex flex-column justify-content-center align-items-center" *ngIf="isConfirmReturnLoading">
+            <div>
+                <span style="font-size: 13px; font-weight: 600;">Fetching lastest data . . . .</span>
+            </div>
+            <div class="spinner-border" role="status"></div>
+        </div>
+    </div>
+    <div class="row" class="h-100 payment_row" *ngIf="status == 'error'">
+        <div class="row status_icon">
+            <img src="../../assets/images/error.png" alt="" srcset="" style="width: 80px;">
+        </div>
+        <div class="row payment_content">
+            <span style="font-weight: 600;font-size: 13px;">Your Transaction failed !</span>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <span style="font-weight: 500;font-size: 13px;">
+                    Please contact our Customer Care on below helpline
+                </span>
+            </div>
+            <div class="d-flex justify-content-center flex-column">
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-envelope text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        info@we.stream
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        USA: +1 (424) 214-3131
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        Europe: +31 (0)88 004 8888
+                    </span>
+                </div>
+            </div>
+            <div class="mt-3 d-flex justify-content-center">
+                <button class="custom_button" (click)="returnToDataPlans()">
+                    <span>Return</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row" class="h-100 payment_row" *ngIf="status == 'default'">
+        <div class="row status_icon">
+            <img src="../../assets/images/warning.png" alt="" srcset="" style="width: 80px;">
+        </div>
+        <div class="row payment_content">
+            <span style="font-weight: 600;font-size: 12px;">There was an issue while topping up your account.</span>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <span style="font-weight: 500;font-size: 13px;">
+                    Please contact our Customer Care on below helpline
+                </span>
+            </div>
+            <div class="d-flex justify-content-center flex-column">
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-envelope text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        info@we.stream
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        USA: +1 (424) 214-3131
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        Europe: +31 (0)88 004 8888
+                    </span>
+                </div>
+            </div>
+            <div class="mt-3 d-flex justify-content-center">
+                <button class="custom_button" (click)="returnToDataPlans()">
+                    <span>Return</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row" class="h-100 payment_row" *ngIf="status == 'expired'">
+        <div class="row status_icon">
+            <img src="../../assets/images/expired.png" alt="" srcset="" style="width: 80px;">
+        </div>
+        <div class="row payment_content">
+            <span style="font-weight: 600;font-size: 12px;">There was an issue while topping up your account.</span>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <span style="font-weight: 500;font-size: 13px;">
+                    Your payment has expired. Retry again !
+                </span>
+            </div>
+            <div class="d-flex justify-content-center flex-column">
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-envelope text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        info@we.stream
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        USA: +1 (424) 214-3131
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <span>
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                    </span>
+                    <span style="font-weight: 500;font-size: 13px; margin-left: 5px;">
+                        Europe: +31 (0)88 004 8888
+                    </span>
+                </div>
+            </div>
+            <div class="mt-3 d-flex justify-content-center">
+                <button class="custom_button" (click)="returnToDataPlans()">
+                    <span>Retry</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

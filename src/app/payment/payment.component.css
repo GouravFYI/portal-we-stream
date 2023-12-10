@@ -1,0 +1,52 @@
+.status_icon {
+    display: flex;
+    justify-content: center;
+}
+
+.payment_container {
+    height: 400px;
+    max-width: 650px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.payment_row {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.payment_row div {
+    margin: 0.5rem;
+}
+
+.payment_content {
+    display: flex;
+    justify-content: center;
+}
+
+.payment_content div {
+    display: flex;
+}
+
+.payment_content div span {
+    margin-left: 10px;
+}
+
+.custom_button {
+    border-radius: 20px;
+    border: none;
+    background-color: black;
+    color: white;
+    padding: 5px 15px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom_button i {
+    margin-top: 3px;
+    margin-left: 5px;
+}
