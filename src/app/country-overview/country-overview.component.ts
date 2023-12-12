@@ -7,15 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CountryOverviewComponent implements OnInit {
 
+  filteredCountries: any[] = [];
+
   countries = [
-    {
-      "cc": "MP",
-      "name": "Saipan"
-    },
-    {
-      "cc": "FR",
-      "name": "Saintes"
-    },
     {
       "cc": "AE",
       "name": "United Arab Emirates"
@@ -485,6 +479,14 @@ export class CountryOverviewComponent implements OnInit {
       "name": "Romania"
     },
     {
+      "cc": "MP",
+      "name": "Saipan"
+    },
+    {
+      "cc": "FR",
+      "name": "Saintes"
+    },
+    {
       "cc": "RS",
       "name": "Serbia"
     },
@@ -601,7 +603,18 @@ export class CountryOverviewComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.filteredCountries = this.countries;
+  }
 
+  filterCountries(event:any): void {
+    let text = event.target.value
+    if(text == '' || /^\s*$/.test(text)){
+      this.filteredCountries = this.countries;
+    }else{
+      this.filteredCountries = this.countries.filter(country =>
+        country.name.toLowerCase().includes(text.toLowerCase())
+      );
+    }
   }
 
 }

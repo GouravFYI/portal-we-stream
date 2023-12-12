@@ -305,6 +305,7 @@ export class ApisService {
     return this.performPostRequestMollie(url, null);
   }
 
+  // Removed
   saveAccount(accountData: any): Observable<any> {
     return this.performPostRequest(`${this.API_URL}user/account/save`, JSON.stringify(accountData));
   }

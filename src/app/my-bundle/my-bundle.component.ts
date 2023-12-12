@@ -61,7 +61,12 @@ export class MyBundleComponent implements OnInit {
   }
 
   navigateToDataPlans(){
-    this.router.navigate(['/data-plans'])
+    let accountInfoData = localStorage.getItem('account-data')
+    if(accountInfoData){
+      this.router.navigate(['/data-plans'])
+    }else{
+      this.router.navigate(['/my-account'])
+    }
   }
 
 }

@@ -1,11 +1,18 @@
 <div class="container">
     <h3 class="text-center mt-4" style="font-size: 16px;">Our Data plans are available in 154+ countries</h3>
+    <div class="d-flex justify-content-center align-center">
+        <input type="text" class="form-control" placeholder="Search for a country..." (input)="filterCountries($event)"
+        style="max-width: 350px;margin-top: 0.5rem;border: 0.5px solid #5353fe;
+        border-radius: 10px">
+    </div>
     <div class="row mt-4" style="overflow: hidden;">
-        <div class="col-md-3 col-sm-6" *ngFor="let country of countries">
+        <div class="col-md-3 col-sm-6" *ngFor="let country of filteredCountries">
             <div class="card mb-3 flag_card">
-                <img src="https://flagsapi.com/{{country.cc}}/shiny/64.png" class="card-img-top" alt="{{ country.name }} Flag">
+                <img src="../../assets/flags/{{country.cc.toLocaleLowerCase()}}.svg" alt="{{ country.name }} Flag"
+                style="width: 50px;">
                 <div class="card-body">
-                    <p class="card-text text-center">{{ country.name }}</p>
+                    <p class="card-text text-center" style="font-size: 13px;
+                    font-weight: 600;">{{ country.name }}</p>
                 </div>
             </div>
         </div>

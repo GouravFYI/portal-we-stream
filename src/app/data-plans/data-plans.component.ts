@@ -154,16 +154,12 @@ export class DataPlansComponent implements OnInit{
       name: `${parsedData?.firstName} ${parsedData.lastName}`,
       email: parsedData?.email,
       country: parsedData?.countryName,
-      vat: parsedData?.vatNumber,
+      vat: parsedData?.vatNumber || null,
       imei: imeival
     }
 
     this.billingDetails = billingDetails
     this.orderSymmary = obj
-    if(!this.isPaypalInit){
-      this.makePayment(obj)
-    }
-    this.isPaypalInit = true
   }
 
   cancelPaymentInput() {
@@ -175,11 +171,25 @@ export class DataPlansComponent implements OnInit{
     this.isPaypalInit = false
     document.querySelectorAll<HTMLInputElement>('#creditCardRadio').forEach(radio => radio.checked = true);
     document.querySelectorAll<HTMLInputElement>('#payPalRadio').forEach(radio => radio.checked = false);
+    document.querySelectorAll<HTMLInputElement>('#paypal-button-container').forEach(element => {
+      element.style.display = 'none';
+    });
+    document.querySelectorAll<HTMLInputElement>('#credit-card-button').forEach(element => {
+      element.style.display = 'block';
+    });
+  }
+
+  editBillingDetails(){
+    window.location.href = `${window.location.origin}/my-account`
   }
 
   paymentMethod(type: string = 'cc') {
     if (type == 'pp') {
       this.checkoutOrder(this.selectedBundle, 0.04)
+      if(!this.isPaypalInit){
+        this.makePayment(this.orderSymmary)
+      }
+      this.isPaypalInit = true
       this.tranxFees = '4'
       this.paymentTool = 'pp'
       document.querySelectorAll<HTMLInputElement>('#paypal-button-container').forEach(element => {
@@ -410,7 +420,7 @@ export class DataPlansComponent implements OnInit{
           let subtotal = price
           let tax = orderSummary?.vat;
           let total = orderSummary?.total;
-
+          console.log(handlingFee,subtotal,tax,total)
           return actions.payment.create({
             payment: {
               transactions: [{

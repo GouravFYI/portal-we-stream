@@ -2,7 +2,7 @@
     <div class="row d-flex px-2">
         <div class="col-md-12" *ngIf="activeBundle.length !== 0">
             <div class="my_bundle_header">
-                My Active Bundle
+               Active Bundle
             </div>
             <div class="card my_bundle_card"
                 style="width:100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;">
@@ -13,8 +13,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="my_bundle_no_data" *ngIf="activeBundle.length == 0">
+        <div class="col-md-12" *ngIf="activeBundle.length == 0">
+            <div class="my_bundle_header">
+                Active Bundle
+             </div>
+            <div class="my_bundle_no_data">
                 <div>
                     No Active Bundle Found
                 </div>
@@ -27,8 +30,11 @@
 
     <div class="row d-flex mt-4 px-2">
         <div class="col-md-12" *ngIf="readyForUsageBundle.length !== 0">
-            <div class="my_bundle_header">
-                Ready To Use Bundles
+            <div class="my_bundle_header d-flex flex-column">
+                <span class="d-flex justify-content-center">Bundle ready for Usage</span>
+                <small class="form-text text-success mt-1 d-flex justify-content-center" style="font-size: 12px;margin-left: 5px;font-weight: 600;">
+                    Starts after your current active bundle expires
+                </small>
             </div>
             <div class="card my_bundle_card" style="width:100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;"
             *ngFor="let item of readyForUsageBundle">
@@ -39,12 +45,15 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="my_bundle_no_data" *ngIf="readyForUsageBundle.length == 0">
+        <div class="col-md-12" *ngIf="readyForUsageBundle.length == 0">
+            <div class="my_bundle_header">
+                Bundle ready for Usage
+            </div>
+            <div class="my_bundle_no_data">
                 <span>No Ready To Use Bundles Found</span> 
                 <small class="form-text text-success mt-1"
-                        style="font-size: 10px;margin-left: 5px;font-weight: 600;">* These Bundles get Activated as soon as 
-                    your current Data Plan expires. You can recharge them prior to the current bundle expiry</small>
+                        style="font-size: 10px;margin-left: 5px;font-weight: 600;">(These Bundles get Activated as soon as 
+                    your current Data Plan expires. You can recharge them prior to the current bundle expiry)</small>
             </div>
         </div>
     </div>
@@ -53,7 +62,7 @@
     <div class="row d-flex mt-4 px-2">
         <div class="col-md-12" *ngIf="historyBundles.length !== 0">
             <div class="my_bundle_header">
-                My Purchase History
+                Purchase History
             </div>
             <div class="card my_bundle_card" style="width:100%; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; border: 0px;"
             *ngFor="let item of historyBundles">
@@ -64,8 +73,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="my_bundle_no_data" *ngIf="historyBundles.length == 0">
+        <div class="col-md-12" *ngIf="historyBundles.length == 0">
+            <div class="my_bundle_header">
+                Purchase History
+            </div>
+            <div class="my_bundle_no_data">
                 No Purchase History Found
             </div>
         </div>
