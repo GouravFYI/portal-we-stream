@@ -10,6 +10,7 @@ export class MyBundleComponent implements OnInit {
   activeBundle: any = null
   readyForUsageBundle: any = null
   historyBundles: any = null
+  isSpeedLimitApplied:boolean = true
 
   constructor(private bundleInfo: BundleinfoService, private router: Router) { }
 
@@ -23,6 +24,7 @@ export class MyBundleComponent implements OnInit {
 
   setBundleInfo() {
     let data: any = sessionStorage.getItem('bundleInfo')
+    this.isSpeedLimitApplied = JSON.parse(data)?.deviceIsSpeedLimited
     let purchaseHistory: any = JSON.parse(data)?.purchaseHistory
     let activeBundle: any = [], readyForUsageBundle: any = [], historyBundles: any = []
     let today = new Date();
