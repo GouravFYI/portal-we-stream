@@ -39,7 +39,7 @@ export class MyAccountComponent implements OnInit {
         vatNumber: [''],
         vatValidValue: [''],
         bankCountry: [''],
-        rCountry: [''],
+        rCountry: ['NL'],
         pCountry: [''],
         sameAsPermanent: [true, Validators.required],
         confirmInfo: [true, Validators.required]
@@ -100,8 +100,14 @@ export class MyAccountComponent implements OnInit {
   toggleAddress() {
     this.isSameAddress = !this.isSameAddress
     this.accountForm.patchValue({
-      sameAsPermanent: this.isSameAddress
+      sameAsPermanent: this.isSameAddress,
+      rCountry : 'NL'
     })
+    if(this.isSameAddress){
+      this.accountForm.patchValue({
+        rCountry : this.accountForm.value['countryOfOrigin']
+      })
+    }
   }
 
   toggleAccountType(type: string) {
