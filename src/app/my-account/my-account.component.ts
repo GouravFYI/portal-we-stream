@@ -87,8 +87,8 @@ export class MyAccountComponent implements OnInit {
         vatNumber: accountData.vatNumber || '',
         vatValidValue: accountData.vatValidValue || '',
         bankCountry: accountData.bankCountry || '',
-        rCountry: accountData.rCountry || '',
-        pCountry: accountData.pCountry || '',
+        rCountry: accountData.countryOfOrigin || '',
+        pCountry: accountData.countryOfOrigin || '',
         sameAsPermanent: accountData.sameAsPermanent || false,
         confirmInfo: accountData.confirmInfo || false
       });
@@ -101,13 +101,7 @@ export class MyAccountComponent implements OnInit {
     this.isSameAddress = !this.isSameAddress
     this.accountForm.patchValue({
       sameAsPermanent: this.isSameAddress,
-      rCountry : 'NL'
     })
-    if(this.isSameAddress){
-      this.accountForm.patchValue({
-        rCountry : this.accountForm.value['countryOfOrigin']
-      })
-    }
   }
 
   toggleAccountType(type: string) {
