@@ -12,6 +12,7 @@ export class PaymentComponent implements OnInit {
   paymentType: any = null
   status: string | null = null
   isConfirmReturnLoading:boolean = false
+  isLoading:boolean  = true
   constructor(private router: Router, private paymentService: PaymentstatusService, private api: ApisService) { }
 
   ngOnInit(): void {
@@ -36,6 +37,7 @@ export class PaymentComponent implements OnInit {
         console.log(orderId,goodsCode)
         // Call CC Payment Confirmation API here  
         this.api.verifyCreditCardPayment(orderId,imeival).subscribe(resp => {
+          this.isLoading = false
           switch (resp) {
             case 'COMPLETED':
               this.status = 'success'
@@ -52,6 +54,7 @@ export class PaymentComponent implements OnInit {
               break;
           }
         }, (error) => {
+          this.isLoading = false
           this.status = 'default'
         })
       }
