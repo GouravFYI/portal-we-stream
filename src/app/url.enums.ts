@@ -1,3 +1,3 @@
 export enum Url {
-    WebPortal = 'https://portal.we.stream/MyAccount/'
+    WebPortal = 'https://test-portal.we.stream/api/'
 }
