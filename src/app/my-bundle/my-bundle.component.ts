@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BundleinfoService } from '../service/bundleinfo.service';
 import { Router } from '@angular/router';
+import { ApisService } from '../apis.service';
 @Component({
   selector: 'app-my-bundle',
   templateUrl: './my-bundle.component.html',
@@ -10,16 +11,12 @@ export class MyBundleComponent implements OnInit {
   activeBundle: any = null
   readyForUsageBundle: any = null
   historyBundles: any = null
-  isSpeedLimitApplied:boolean = true
+  isSpeedLimitApplied:boolean = false
 
-  constructor(private bundleInfo: BundleinfoService, private router: Router) { }
+  constructor(private bundleInfo: BundleinfoService, private router: Router, private api: ApisService) { }
 
   ngOnInit(): void {
-    if (sessionStorage.getItem('bundleInfo') !== null) {
-      this.setBundleInfo()
-    } else {
-      this.router.navigate(['/login'])
-    }
+    this.fetchUpdatedBundleInfo()
   }
 
   setBundleInfo() {
@@ -69,6 +66,15 @@ export class MyBundleComponent implements OnInit {
     }else{
       this.router.navigate(['/my-account'])
     }
+  }
+
+  fetchUpdatedBundleInfo(){
+    let imei: any = localStorage.getItem('imei')
+    let imeival = JSON.parse(imei)
+    this.api.getBundles(imeival,null,null).subscribe(resp => {
+      sessionStorage.setItem('bundleInfo',JSON.stringify(resp))
+      this.setBundleInfo()
+    })
   }
 
 }

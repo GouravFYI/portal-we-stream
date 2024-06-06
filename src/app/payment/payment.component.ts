@@ -23,6 +23,7 @@ export class PaymentComponent implements OnInit {
     let imei: any = sessionStorage.getItem('imei')
     let imeival = JSON.parse(imei)
     let data = this.paymentService.getpaymentStatus()
+    console.log(data)
     // For Direct Purchase
     if (data) {
       this.status = data?.status || 'success'
@@ -57,6 +58,18 @@ export class PaymentComponent implements OnInit {
           this.isLoading = false
           this.status = 'default'
         })
+      }else{
+        let data = new URLSearchParams(new URL(window.location.href).search)
+        let status = data.get('status')
+        this.isLoading = false
+        switch (status) {
+          case 'OK':
+            this.status = 'success'
+            break;
+          default:
+            this.status = 'default'
+            break;
+        }
       }
     }
   }

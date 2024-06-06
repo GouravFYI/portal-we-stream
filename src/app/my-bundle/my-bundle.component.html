@@ -1,4 +1,8 @@
 <div class="container mt-3 bundle_comp">
+    <div class="d-flex justify-content-center flex-column align-items-center" *ngIf="activeBundle == null && readyForUsageBundle == null && historyBundles == null">
+        <div class="spinner-border" role="status"></div>
+        <span class="mt-3">Fetching your bundles....</span>
+    </div>
     <div class="row d-flex justify-content-center" style="font-size: 13px;font-weight: 600;
     color: #119fdb;cursor: pointer;" *ngIf="isSpeedLimitApplied" data-bs-toggle="modal" data-bs-target="#speedLimitModal">A SPEED LIMIT
         IS APPLIED. CLICK HERE TO LEARN MORE</div>

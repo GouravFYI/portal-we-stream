@@ -38,7 +38,12 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    if(localStorage.getItem('imei')){
+      let imei:any = localStorage.getItem('imei')
+      this.validImei = JSON.parse(imei)
+      sessionStorage.setItem('imei',JSON.stringify(this.validImei))
+      this.getBundleInfo()
+    }
   }
 
   validateIMEI(event:any){
@@ -82,6 +87,7 @@ export class LoginComponent implements OnInit {
       this.validImei = input
       sessionStorage.setItem('imeiInfo',JSON.stringify(resp))
       sessionStorage.setItem('imei',JSON.stringify(input))
+      localStorage.setItem('imei',JSON.stringify(input))
     },(error)=>{
       this.imeiStatusMessage = {
         message : 'Invalid IMEI',
@@ -98,7 +104,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = false
       this.visibilityService.toggleNav(true);
       sessionStorage.setItem('visibleNav','1')
-      this.router.navigate(['/my-bundle']);
+      this.router.navigate(['/my-account']);
     },(error)=>{
       this.isLoading = false
       this.isError = true

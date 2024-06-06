@@ -455,19 +455,11 @@ export class DataPlansComponent implements OnInit{
             };
 
             this.api.payPaypal(bundle.code, params).subscribe(resp => {
-              let paymentStatus = {
-                status: 'success',
-                paymentType: 'pp'
-              }
-              this.paymentStatus.setpaymentStatus(paymentStatus)
-              this.router.navigate(['/payment']);
+              console.log(resp)
+              this.router.navigate(['/payment'],{ queryParams: { paymentType: 'pp',status: 'OK' } });
             },(error) => {
-              let paymentStatus = {
-                status: 'error',
-                paymentType: 'pp'
-              }
-              this.paymentStatus.setpaymentStatus(paymentStatus)
-              this.router.navigate(['/payment']);
+              console.log(error)
+              this.router.navigate(['/payment'],{ queryParams: { paymentType: 'pp',status: 'OK' } });
             })
           });
 
