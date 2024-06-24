@@ -153,10 +153,12 @@ export class DataPlansComponent implements OnInit{
     let billingDetails = {
       name: `${parsedData?.firstName} ${parsedData.lastName}`,
       email: parsedData?.email,
-      country: parsedData?.countryName,
+      country: parsedData?.bankCountry,
       vat: parsedData?.vatNumber || null,
       imei: imeival
     }
+
+    console.log()
 
     this.billingDetails = billingDetails
     this.orderSymmary = obj

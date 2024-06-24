@@ -83,17 +83,6 @@
                 <label class="form-label">Company Address</label>
                 <input class="form-control" type="text" minlength="1" formControlName="companyAddress">
             </div>
-            <div class="form-group" *ngIf="accountType == 'business'">
-                <label class="form-label">Company ID</label>
-                <input class="form-control" type="text" minlength="1" formControlName="companyId">
-            </div>
-            <div class="form-group" *ngIf="accountType == 'business' && isEUNation">
-                <label class="form-label">Vat Number</label>
-                <input class="form-control" type="text" minlength="1" formControlName="vatNumber"
-                    (keyup)="validateVat($event)">
-                <small class="form-text {{vatValidationMessage.class}} mt-1"
-                    style="font-size: 10px;margin-left: 5px;font-weight: 600;">{{vatValidationMessage.message}}</small>
-            </div>
             <div class="form-check form-switch mt-2">
                 <input class="form-check-input" type="checkbox" role="switch" id="acknowledgeSwitchCheckChecked" formControlName="confirmInfo">
                 <label class="form-check-label" for="acknowledgeSwitchCheckChecked">
@@ -110,7 +99,7 @@
             </div>
             <div class="form-group">
                 <button class="account_button" (click)="saveAccountInfo()"
-                    [disabled]="!((accountForm.get('accountType')?.value == 'personal' || !isEUNation) ? (accountForm.valid && accountForm.get('confirmInfo')?.value) : (accountForm.valid && isVatValid && accountForm.get('confirmInfo')?.value))">
+                    [disabled]="!((accountForm.get('accountType')?.value == 'personal' || !isEUNation) ? (accountForm.valid && accountForm.get('confirmInfo')?.value) : (accountForm.valid && accountForm.get('confirmInfo')?.value))">
                     Save and Continue
                 </button>
             </div>
