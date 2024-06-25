@@ -38,4 +38,8 @@ export class AppComponent implements OnInit {
     listElement.classList.remove('show');
   }
 
+  logOut() {
+    localStorage.removeItem('imei')
+  }
+
 }
