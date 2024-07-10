@@ -61,6 +61,7 @@ export class MyAccountComponent implements OnInit {
       ...this.accountForm.value,
       countryName : this.api.euCountryList()[this.accountForm.value?.countryOfOrigin]
     }
+    console.log(this.accountForm.valid, this.accountForm.get('confirmInfo')?.value)
     localStorage.setItem('account-data', JSON.stringify(info))
     this.router.navigate(['/data-plans'])
   }

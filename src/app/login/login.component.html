@@ -9,7 +9,7 @@
         <div class="login_form">
             <div class="form-group">
                 <label for="IMEI" style="font-weight: 600;margin-left: 5px;font-weight: 600;">IMEI Number</label>
-                <input type="text" class="form-control mt-1" placeholder="Enter IMEI" (keyup)="validateIMEI($event)" [(ngModel)]="validImei">
+                <input type="text" class="form-control mt-1" placeholder="Enter IMEI" (input)="validateIMEI($event)" [(ngModel)]="validImei">
                 <small class="form-text {{imeiStatusMessage.class}} mt-1"
                     style="font-size: 10px;margin-left: 5px;font-weight: 600;">{{imeiStatusMessage.message}}</small>
             </div>
