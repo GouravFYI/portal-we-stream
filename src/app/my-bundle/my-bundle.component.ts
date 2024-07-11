@@ -8,9 +8,9 @@ import { ApisService } from '../apis.service';
   styleUrls: ['./my-bundle.component.css']
 })
 export class MyBundleComponent implements OnInit {
-  activeBundle: any = null
-  readyForUsageBundle: any = null
-  historyBundles: any = null
+  activeBundle: any = []
+  readyForUsageBundle: any = []
+  historyBundles: any = []
   isSpeedLimitApplied:boolean = false
 
   constructor(private bundleInfo: BundleinfoService, private router: Router, private api: ApisService) { }
@@ -19,10 +19,10 @@ export class MyBundleComponent implements OnInit {
     this.fetchUpdatedBundleInfo()
   }
 
-  setBundleInfo() {
-    let data: any = sessionStorage.getItem('bundleInfo')
+  setBundleInfo(bundleData:any) {
+    let data: any = bundleData
     this.isSpeedLimitApplied = JSON.parse(data)?.deviceIsSpeedLimited
-    let purchaseHistory: any = JSON.parse(data)?.purchaseHistory
+    let purchaseHistory: any = JSON.parse(data)?.purchaseHistory || []
     let activeBundle: any = [], readyForUsageBundle: any = [], historyBundles: any = []
     let today = new Date();
     for (let i = 0; i < purchaseHistory.length; i++) {
@@ -73,7 +73,7 @@ export class MyBundleComponent implements OnInit {
     let imeival = JSON.parse(imei)
     this.api.getBundles(imeival,null,null).subscribe(resp => {
       sessionStorage.setItem('bundleInfo',JSON.stringify(resp))
-      this.setBundleInfo()
+      this.setBundleInfo(JSON.stringify(resp))
     })
   }
 

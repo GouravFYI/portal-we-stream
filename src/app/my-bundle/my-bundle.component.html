@@ -1,5 +1,5 @@
 <div class="container mt-3 bundle_comp">
-    <div class="d-flex justify-content-center flex-column align-items-center" *ngIf="activeBundle == null && readyForUsageBundle == null && historyBundles == null">
+    <div class="d-flex justify-content-center flex-column align-items-center" *ngIf="activeBundle.length == 0 && readyForUsageBundle.length == 0 && historyBundles.length == 0">
         <div class="spinner-border" role="status"></div>
         <span class="mt-3">Fetching your bundles....</span>
     </div>
